@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, Chantier, ChantierPayload } from "../api/client";
 
-const EMPTY: ChantierPayload = { nom: "", description: "" };
+const EMPTY: ChantierPayload = { nom: "", description: "", marge_securite: 0 };
 
 export default function Chantiers() {
   const [chantiers, setChantiers] = useState<Chantier[]>([]);
@@ -18,7 +18,7 @@ export default function Chantiers() {
 
   const openCreate = () => { setForm(EMPTY); setEditing(null); setShowForm(true); };
   const openEdit = (c: Chantier) => {
-    setForm({ nom: c.nom, description: c.description });
+    setForm({ nom: c.nom, description: c.description, marge_securite: c.marge_securite ?? 0 });
     setEditing(c.id);
     setShowForm(true);
   };
@@ -60,15 +60,19 @@ export default function Chantiers() {
         <div className="grid gap-4">
           {chantiers.map((c) => (
             <div key={c.id} className="card flex items-center justify-between hover:shadow-md transition-shadow">
-              <button
-                className="flex-1 text-left"
-                onClick={() => navigate(`/chantier/${c.id}`)}
-              >
+              <button className="flex-1 text-left" onClick={() => navigate(`/chantier/${c.id}`)}>
                 <p className="font-bold text-bleu text-lg">{c.nom}</p>
                 {c.description && <p className="text-gray-500 text-sm mt-0.5">{c.description}</p>}
-                <p className="text-xs text-orange mt-2 font-semibold">
-                  {c.nb_pieces} pièce{c.nb_pieces !== 1 ? "s" : ""}
-                </p>
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-xs text-orange font-semibold">
+                    {c.nb_pieces} pièce{c.nb_pieces !== 1 ? "s" : ""}
+                  </span>
+                  {(c.marge_securite ?? 0) > 0 && (
+                    <span className="text-xs bg-bleu/10 text-bleu px-2 py-0.5 rounded-full font-medium">
+                      Marge +{c.marge_securite}%
+                    </span>
+                  )}
+                </div>
               </button>
               <div className="flex gap-2 ml-4">
                 <button onClick={() => openEdit(c)} className="btn-ghost text-sm py-1.5">Modifier</button>
@@ -94,17 +98,29 @@ export default function Chantiers() {
             />
             <label className="label">Description</label>
             <textarea
-              className="input mb-4 h-24 resize-none"
+              className="input mb-3 h-20 resize-none"
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               placeholder="Informations complémentaires..."
             />
+            <label className="label">Marge de sécurité (%)</label>
+            <div className="flex items-center gap-2 mb-4">
+              <input
+                className="input w-28"
+                type="number" min="0" max="50" step="1"
+                value={form.marge_securite}
+                onChange={(e) => setForm({ ...form, marge_securite: parseFloat(e.target.value) || 0 })}
+              />
+              <span className="text-sm text-gray-500">
+                {form.marge_securite > 0
+                  ? `+${form.marge_securite}% appliqué sur toutes les quantités`
+                  : "Aucune marge (quantités exactes)"}
+              </span>
+            </div>
             {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
             <div className="flex gap-3 justify-end">
               <button onClick={close} className="btn-ghost">Annuler</button>
-              <button onClick={save} className="btn-primary">
-                {editing ? "Enregistrer" : "Créer"}
-              </button>
+              <button onClick={save} className="btn-primary">{editing ? "Enregistrer" : "Créer"}</button>
             </div>
           </div>
         </div>

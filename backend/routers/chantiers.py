@@ -97,18 +97,28 @@ def get_synthese(chantier_id: int, session: Session = Depends(get_session)):
             qte_principale = poste.quantite_reference * mat.ratio_consommation
             _add_qte(mat, qte_principale)
 
+            excluded_ids: set[int] = set()
+            if poste.dependances_exclues:
+                excluded_ids = {int(x) for x in poste.dependances_exclues.split(",") if x.strip()}
+
             dependances = session.exec(
                 select(Dependance).where(Dependance.materiau_principal_id == poste.materiau_principal_id)
             ).all()
             for dep in dependances:
+                if dep.id in excluded_ids:
+                    continue
+                if poste.usage and dep.usage and dep.usage != poste.usage:
+                    continue
                 mat_dep = session.get(Materiau, dep.materiau_dependant_id)
                 if not mat_dep:
                     continue
                 _add_qte(mat_dep, poste.quantite_reference * dep.ratio)
 
+    marge = 1 + (chantier.marge_securite or 0) / 100
+
     lignes = []
     for entry in agregat.values():
-        qte = entry["quantite_totale"]
+        qte = entry["quantite_totale"] * marge
         cond = entry["conditionnement"]
         nb_achat = math.ceil(qte / cond) if cond and cond > 0 else None
         lignes.append({
@@ -121,4 +131,10 @@ def get_synthese(chantier_id: int, session: Session = Depends(get_session)):
     lignes.sort(key=lambda x: (x["corps_metier"], x["nom"]))
 
     total_ht = round(sum(l["total"] for l in lignes), 2)
-    return {"chantier_id": chantier_id, "nom": chantier.nom, "lignes": lignes, "total_ht": total_ht}
+    return {
+        "chantier_id": chantier_id,
+        "nom": chantier.nom,
+        "marge_securite": chantier.marge_securite or 0,
+        "lignes": lignes,
+        "total_ht": total_ht,
+    }
