@@ -108,6 +108,12 @@ export default function ChantierDetail() {
           </div>
           <div className="flex gap-3">
             <button
+              onClick={() => navigate(`/chantier/${chantierId}/synthese`)}
+              className="btn-secondary flex items-center gap-2"
+            >
+              📋 Synthèse
+            </button>
+            <button
               onClick={handleExport}
               disabled={exporting}
               className="btn-secondary flex items-center gap-2"

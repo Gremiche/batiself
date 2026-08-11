@@ -82,6 +82,9 @@ export const api = {
   // PDF export
   exportPdf: (chantierId: number) =>
     window.open(BASE + `/export/pdf/${chantierId}`, "_blank"),
+
+  // Synthèse chantier
+  getSynthese: (chantierId: number) => req<Synthese>(`/chantiers/${chantierId}/synthese`),
 };
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -212,4 +215,23 @@ export interface Alerte {
   materiau_b: string;
   raison: string;
   severite: string;
+}
+
+export interface LigneSynthese {
+  materiau_id: number;
+  nom: string;
+  corps_metier: string;
+  unite: string;
+  prix_unitaire: number | null;
+  conditionnement: number | null;
+  unite_achat: string | null;
+  quantite_totale: number;
+  nb_achat: number | null;
+  total: number;
+}
+export interface Synthese {
+  chantier_id: number;
+  nom: string;
+  lignes: LigneSynthese[];
+  total_ht: number;
 }
