@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 80" fill="none">
+  <path d="M32.35,15.15 L36.07,7.23 L43.93,7.23 L47.65,15.15 L52.17,17.02 L60.39,14.05 L65.95,19.61 L62.98,27.83 L64.85,32.35 L72.77,36.07 L72.77,43.93 L64.85,47.65 L62.98,52.17 L65.95,60.39 L60.39,65.95 L52.17,62.98 L47.65,64.85 L43.93,72.77 L36.07,72.77 L32.35,64.85 L27.83,62.98 L19.61,65.95 L14.05,60.39 L17.02,52.17 L15.15,47.65 L7.23,43.93 L7.23,36.07 L15.15,32.35 L17.02,27.83 L14.05,19.61 L19.61,14.05 L27.83,17.02 Z M58.00,40.00 L57.65,36.49 L56.63,33.11 L54.97,30.00 L52.73,27.27 L50.00,25.03 L46.89,23.37 L43.51,22.35 L40.00,22.00 L36.49,22.35 L33.11,23.37 L30.00,25.03 L27.27,27.27 L25.03,30.00 L23.37,33.11 L22.35,36.49 L22.00,40.00 L22.35,43.51 L23.37,46.89 L25.03,50.00 L27.27,52.73 L30.00,54.97 L33.11,56.63 L36.49,57.65 L40.00,58.00 L43.51,57.65 L46.89,56.63 L50.00,54.97 L52.73,52.73 L54.97,50.00 L56.63,46.89 L57.65,43.51 Z" fill="#1a3a6b" fill-rule="evenodd"/>
+  <path d="M40,27 L31,37 L49,37 Z" fill="#1a3a6b" opacity="0.95"/>
+  <path d="M32,37 L32,48 L48,48 L48,37 Z" stroke="#1a3a6b" stroke-width="1.5" fill="none"/>
+  <path d="M37.5,41 L37.5,48 L42.5,48 L42.5,41 Z" stroke="#1a3a6b" stroke-width="1.2" fill="none"/>
+  <path d="M43,45 L54,30 M54,30 L48,31 M54,30 L53,36" stroke="#F5821F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="90" y="43" font-family="'Segoe UI',Arial,sans-serif" font-size="31" font-weight="800" fill="#1a3a6b">bati</text>
+  <text x="138" y="43" font-family="'Segoe UI',Arial,sans-serif" font-size="31" font-weight="800" fill="#F5821F">self</text>
+  <text x="90" y="59" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="600" letter-spacing="2.5" fill="#1a3a6b">GESTION DE CHANTIERS</text>
+</svg>
