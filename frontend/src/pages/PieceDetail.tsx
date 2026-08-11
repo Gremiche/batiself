@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   api, Piece, Poste, PostePayload, Materiau,
@@ -57,6 +57,11 @@ export default function PieceDetail() {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
 
+  // Autocomplete state
+  const [acSearch, setAcSearch] = useState("");
+  const [acOpen, setAcOpen] = useState(false);
+  const acRef = useRef<HTMLDivElement>(null);
+
   const load = async () => {
     const [p, ps, mats, sug, inc] = await Promise.all([
       api.getPiece(pieceId),
@@ -87,14 +92,29 @@ export default function PieceDetail() {
     setError("");
     setSelectedMat(null);
     setBaseRef("manuel");
+    setAcSearch("");
+    setAcOpen(false);
   };
 
   const openForm = () => {
     setForm({ piece_id: pieceId, corps_metier: "", materiau_principal_id: 0, quantite_reference: 0, commentaire: null });
     setSelectedMat(null);
     setBaseRef("manuel");
+    setAcSearch("");
+    setAcOpen(false);
     setShowForm(true);
   };
+
+  // Close autocomplete dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (acRef.current && !acRef.current.contains(e.target as Node)) {
+        setAcOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const handleSelectMateriau = (matId: number) => {
     if (!piece) return;
@@ -300,20 +320,57 @@ export default function PieceDetail() {
           <div className="card w-full max-w-md shadow-xl">
             <h2 className="text-xl font-bold text-bleu mb-5">Nouveau poste de travaux</h2>
 
-            {/* Sélection matériau */}
+            {/* Autocomplete matériau */}
             <label className="label">Matériau principal *</label>
-            <select
-              className="input mb-4"
-              value={form.materiau_principal_id || ""}
-              onChange={(e) => handleSelectMateriau(Number(e.target.value))}
-            >
-              <option value="">-- Sélectionner --</option>
-              {materiaux.map((m) => (
-                <option key={m.id} value={m.id}>
-                  [{m.corps_metier}] {m.nom} ({m.unite})
-                </option>
-              ))}
-            </select>
+            <div ref={acRef} className="relative mb-4">
+              <input
+                className="input w-full"
+                type="text"
+                placeholder="Rechercher un matériau…"
+                value={acSearch}
+                autoComplete="off"
+                onChange={(e) => {
+                  setAcSearch(e.target.value);
+                  setAcOpen(true);
+                  if (!e.target.value) {
+                    setSelectedMat(null);
+                    setForm((f) => ({ ...f, materiau_principal_id: 0, corps_metier: "" }));
+                  }
+                }}
+                onFocus={() => setAcOpen(true)}
+              />
+              {acOpen && (() => {
+                const q = acSearch.toLowerCase();
+                const filtered = materiaux.filter(
+                  (m) =>
+                    m.nom.toLowerCase().includes(q) ||
+                    m.corps_metier.toLowerCase().includes(q)
+                );
+                return filtered.length > 0 ? (
+                  <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-56 overflow-y-auto mt-1">
+                    {filtered.map((m) => (
+                      <li
+                        key={m.id}
+                        className="px-4 py-2.5 cursor-pointer hover:bg-bleu/5 flex items-baseline justify-between gap-3"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          setAcSearch(m.nom);
+                          setAcOpen(false);
+                          handleSelectMateriau(m.id);
+                        }}
+                      >
+                        <span className="font-medium text-sm">{m.nom}</span>
+                        <span className="text-xs text-gray-400 shrink-0">{m.corps_metier} · {m.unite}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="absolute z-50 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-1 px-4 py-3 text-sm text-gray-400">
+                    Aucun matériau trouvé
+                  </div>
+                );
+              })()}
+            </div>
 
             {/* Bloc quantité — affiché seulement si matériau sélectionné */}
             {selectedMat && (
