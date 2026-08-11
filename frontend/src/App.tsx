@@ -5,6 +5,7 @@ import ChantierDetail from "./pages/ChantierDetail";
 import PieceDetail from "./pages/PieceDetail";
 import Referentiel from "./pages/Referentiel";
 import Regles from "./pages/Regles";
+import SyntheseChantier from "./pages/SyntheseChantier";
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<Chantiers />} />
         <Route path="/chantier/:id" element={<ChantierDetail />} />
+        <Route path="/chantier/:id/synthese" element={<SyntheseChantier />} />
         <Route path="/piece/:id" element={<PieceDetail />} />
         <Route path="/referentiel" element={<Referentiel />} />
         <Route path="/regles" element={<Regles />} />
