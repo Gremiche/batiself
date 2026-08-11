@@ -19,3 +19,9 @@ D017,M007,M029,2% du poids d'acier,obligatoire,
 D018,M008,M029,2% du poids d'acier,obligatoire,
 D019,M032,M033,2 à 3 m linéaire/m²,obligatoire,
 D020,M032,M034,1.1 m²/m²,conditionnelle,si combles aménagés ou climat pluvieux/venteux
+D021,M040,M046,variable selon distance au collecteur,obligatoire,
+D022,M041,M045,1 unité/appareil,obligatoire,
+D023,M042,M045,1 unité/appareil,obligatoire,
+D024,M043,M045,1 unité/appareil,obligatoire,
+D025,M044,M045,1 unité/appareil,obligatoire,
+D026,M036,M039,variable selon nombre de circuits (max 8 prises/circuit en 2.5mm² ou 5 en 1.5mm²),obligatoire,NF C 15-100

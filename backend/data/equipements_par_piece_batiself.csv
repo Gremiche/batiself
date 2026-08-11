@@ -1,0 +1,16 @@
+id,type_piece,materiau_id,quantite,condition,note_source
+E001,piece_a_vivre,M037,1,,Plafonnier obligatoire - NF C 15-100
+E002,piece_a_vivre,M036,5,si surface ≤ 28 m² (7 si surface > 28 m²),NF C 15-100
+E003,piece_a_vivre,M038,1,,Circuit télécom dédié - NF C 15-100
+E004,chambre,M037,1,,Éclairage plafonnier obligatoire - NF C 15-100
+E005,chambre,M036,3,dont une prise près de l'interrupteur,NF C 15-100 (minimum quelle que soit la surface)
+E006,chambre,M038,1,,Prise RJ45 recommandée
+E007,piece_d_eau,M037,1,,Éclairage obligatoire - hors volumes de sécurité
+E008,piece_d_eau,M036,1,hors volumes de sécurité V0/V1/V2,NF C 15-100
+E009,piece_d_eau,M040,1,si WC intégré à la pièce,
+E010,piece_d_eau,M041,1,,
+E011,piece_d_eau,M043,1,si douche choisie (alternative à E012),
+E012,piece_d_eau,M044,1,si baignoire choisie (alternative à E011),
+E013,piece_d_eau,M045,2 à 3,un par appareil sanitaire réellement présent,
+E014,piece_morte,M037,1,,Éclairage minimum
+E015,piece_morte,M036,1,facultatif selon usage (atelier, stockage),
