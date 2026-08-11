@@ -1,3 +1,4 @@
+import math
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from models import (
@@ -49,6 +50,11 @@ def calcul_poste(poste_id: int, session: Session = Depends(get_session)):
         select(Dependance).where(Dependance.materiau_principal_id == poste.materiau_principal_id)
     ).all()
 
+    def _nb_achat(qte: float, mat: Materiau) -> int | None:
+        if mat.conditionnement and mat.conditionnement > 0:
+            return math.ceil(qte / mat.conditionnement)
+        return None
+
     lignes = [{
         "materiau_id": mat_principal.id,
         "nom": mat_principal.nom,
@@ -57,6 +63,9 @@ def calcul_poste(poste_id: int, session: Session = Depends(get_session)):
         "prix_unitaire": mat_principal.prix_unitaire,
         "total": round(qte_principale * (mat_principal.prix_unitaire or 0), 2),
         "est_dependant": False,
+        "nb_achat": _nb_achat(qte_principale, mat_principal),
+        "unite_achat": mat_principal.unite_achat,
+        "conditionnement": mat_principal.conditionnement,
     }]
 
     for dep in dependances:
@@ -73,9 +82,12 @@ def calcul_poste(poste_id: int, session: Session = Depends(get_session)):
             "total": round(qte_dep * (mat_dep.prix_unitaire or 0), 2),
             "est_dependant": True,
             "type_dependance": dep.type_dependance,
+            "nb_achat": _nb_achat(qte_dep, mat_dep),
+            "unite_achat": mat_dep.unite_achat,
+            "conditionnement": mat_dep.conditionnement,
         })
 
-    return {"poste_id": poste_id, "lignes": lignes}
+    return {"poste_id": poste_id, "lignes": lignes, "commentaire": poste.commentaire}
 
 
 @router.get("/incompatibilites/piece/{piece_id}")
