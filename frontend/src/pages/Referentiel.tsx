@@ -5,6 +5,7 @@ const EMPTY: MateriauPayload = {
   nom: "", corps_metier: "", unite: "m²",
   ratio_consommation: 1, prix_unitaire: null,
   fournisseur: null, notes: null, reference_obat: null,
+  conditionnement: null, unite_achat: null,
 };
 
 const UNITES = ["m²", "m", "m³", "u", "kg", "L", "ml", "forfait"];
@@ -35,6 +36,7 @@ export default function Referentiel() {
       ratio_consommation: m.ratio_consommation,
       prix_unitaire: m.prix_unitaire, fournisseur: m.fournisseur,
       notes: m.notes, reference_obat: m.reference_obat,
+      conditionnement: m.conditionnement, unite_achat: m.unite_achat,
     });
     setEditing(m.id);
     setShowForm(true);
@@ -152,6 +154,7 @@ export default function Referentiel() {
                       <th className="text-left px-4 py-3">Unité</th>
                       <th className="text-right px-4 py-3">Ratio</th>
                       <th className="text-right px-4 py-3">Prix HT</th>
+                      <th className="text-left px-4 py-3">Cond.</th>
                       <th className="text-left px-4 py-3">Réf. Obat</th>
                       <th className="px-4 py-3"></th>
                     </tr>
@@ -164,6 +167,11 @@ export default function Referentiel() {
                         <td className="px-4 py-2.5 text-right">{m.ratio_consommation}</td>
                         <td className="px-4 py-2.5 text-right">
                           {m.prix_unitaire != null ? `${m.prix_unitaire.toFixed(2)} €` : "—"}
+                        </td>
+                        <td className="px-4 py-2.5 text-xs text-gray-500">
+                          {m.conditionnement
+                            ? `${m.conditionnement} ${m.unite}/${m.unite_achat ?? "u"}`
+                            : "—"}
                         </td>
                         <td className="px-4 py-2.5 text-xs text-gray-400">{m.reference_obat ?? "—"}</td>
                         <td className="px-4 py-2.5 flex gap-1 justify-end">
@@ -227,6 +235,24 @@ export default function Referentiel() {
                 <label className="label">Référence Obat</label>
                 <input className="input" value={form.reference_obat ?? ""}
                   onChange={(e) => setForm({ ...form, reference_obat: e.target.value || null })} />
+              </div>
+              <div className="col-span-2 border-t border-gray-100 pt-3 mt-1">
+                <p className="text-xs font-semibold text-bleu uppercase tracking-wide mb-2">Conditionnement (achat)</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="label">Qté par colis ({form.unite})</label>
+                    <input className="input" type="number" step="0.01" min="0"
+                      value={form.conditionnement ?? ""}
+                      placeholder={`Ex: 3 pour une plaque de 3 ${form.unite}`}
+                      onChange={(e) => setForm({ ...form, conditionnement: e.target.value ? parseFloat(e.target.value) : null })} />
+                  </div>
+                  <div>
+                    <label className="label">Nom du colis</label>
+                    <input className="input" value={form.unite_achat ?? ""}
+                      placeholder="plaque, sac, rouleau…"
+                      onChange={(e) => setForm({ ...form, unite_achat: e.target.value || null })} />
+                  </div>
+                </div>
               </div>
               <div className="col-span-2">
                 <label className="label">Notes</label>

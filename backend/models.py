@@ -83,6 +83,8 @@ class MateriauBase(SQLModel):
     fournisseur: Optional[str] = None
     notes: Optional[str] = None
     reference_obat: Optional[str] = None
+    conditionnement: Optional[float] = None
+    unite_achat: Optional[str] = None
 
 
 class Materiau(MateriauBase, table=True):
@@ -155,6 +157,7 @@ class PosteTravauxBase(SQLModel):
     corps_metier: str
     materiau_principal_id: int = Field(foreign_key="materiau.id")
     quantite_reference: float
+    commentaire: Optional[str] = None
 
 
 class PosteTravaux(PosteTravauxBase, table=True):

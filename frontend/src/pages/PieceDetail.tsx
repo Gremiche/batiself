@@ -50,6 +50,7 @@ export default function PieceDetail() {
     corps_metier: "",
     materiau_principal_id: 0,
     quantite_reference: 0,
+    commentaire: null,
   });
   const [baseRef, setBaseRef] = useState<BaseRef>("manuel");
   const [selectedMat, setSelectedMat] = useState<Materiau | null>(null);
@@ -89,7 +90,7 @@ export default function PieceDetail() {
   };
 
   const openForm = () => {
-    setForm({ piece_id: pieceId, corps_metier: "", materiau_principal_id: 0, quantite_reference: 0 });
+    setForm({ piece_id: pieceId, corps_metier: "", materiau_principal_id: 0, quantite_reference: 0, commentaire: null });
     setSelectedMat(null);
     setBaseRef("manuel");
     setShowForm(true);
@@ -233,6 +234,9 @@ export default function PieceDetail() {
                         <p className="text-sm text-gray-500">
                           {poste.corps_metier} · réf. {poste.quantite_reference}
                         </p>
+                        {calc?.commentaire && (
+                          <p className="text-sm text-orange mt-1 italic">💬 {calc.commentaire}</p>
+                        )}
                       </div>
                       <button onClick={() => remove(poste.id)} className="btn-danger text-xs py-1 px-2">Supprimer</button>
                     </div>
@@ -243,6 +247,7 @@ export default function PieceDetail() {
                             <th className="text-left px-3 py-2 rounded-l">Matériau</th>
                             <th className="text-right px-3 py-2">Qté</th>
                             <th className="text-right px-3 py-2">Unité</th>
+                            <th className="text-right px-3 py-2">À acheter</th>
                             <th className="text-right px-3 py-2 rounded-r">Total €</th>
                           </tr>
                         </thead>
@@ -257,6 +262,13 @@ export default function PieceDetail() {
                               </td>
                               <td className="px-3 py-2 text-right">{l.quantite.toFixed(3)}</td>
                               <td className="px-3 py-2 text-right text-gray-500">{l.unite}</td>
+                              <td className="px-3 py-2 text-right">
+                                {l.nb_achat != null ? (
+                                  <span className="inline-flex items-center gap-1 bg-orange/10 text-orange font-bold px-2 py-0.5 rounded-full text-xs">
+                                    {l.nb_achat} {l.unite_achat ?? "u"}
+                                  </span>
+                                ) : "—"}
+                              </td>
                               <td className="px-3 py-2 text-right font-medium">
                                 {l.prix_unitaire ? `${l.total.toFixed(2)} €` : "—"}
                               </td>
@@ -391,8 +403,19 @@ export default function PieceDetail() {
               </>
             )}
 
+            {/* Commentaire */}
+            <div className="mt-1">
+              <label className="label">Commentaire (optionnel)</label>
+              <textarea
+                className="input h-20 resize-none"
+                value={form.commentaire ?? ""}
+                onChange={(e) => setForm({ ...form, commentaire: e.target.value || null })}
+                placeholder="Ex : acheté en lot de 10, prévoir chute pour découpe angle…"
+              />
+            </div>
+
             {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-3 justify-end mt-3">
               <button onClick={close} className="btn-ghost">Annuler</button>
               <button onClick={save} className="btn-primary">Créer</button>
             </div>

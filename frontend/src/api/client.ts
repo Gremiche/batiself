@@ -127,6 +127,8 @@ export interface Materiau {
   fournisseur: string | null;
   notes: string | null;
   reference_obat: string | null;
+  conditionnement: number | null;
+  unite_achat: string | null;
 }
 export interface MateriauPayload {
   nom: string;
@@ -137,6 +139,8 @@ export interface MateriauPayload {
   fournisseur: string | null;
   notes: string | null;
   reference_obat: string | null;
+  conditionnement: number | null;
+  unite_achat: string | null;
 }
 
 export interface Dependance {
@@ -175,12 +179,14 @@ export interface Poste {
   corps_metier: string;
   materiau_principal_id: number;
   quantite_reference: number;
+  commentaire: string | null;
 }
 export interface PostePayload {
   piece_id: number;
   corps_metier: string;
   materiau_principal_id: number;
   quantite_reference: number;
+  commentaire: string | null;
 }
 
 export interface LigneCalc {
@@ -192,8 +198,15 @@ export interface LigneCalc {
   total: number;
   est_dependant: boolean;
   type_dependance?: string;
+  nb_achat: number | null;
+  unite_achat: string | null;
+  conditionnement: number | null;
 }
-export interface CalcResult { poste_id: number; lignes: LigneCalc[] }
+export interface CalcResult {
+  poste_id: number;
+  lignes: LigneCalc[];
+  commentaire: string | null;
+}
 export interface Alerte {
   materiau_a: string;
   materiau_b: string;
