@@ -1,0 +1,16 @@
+id_dependance,materiau_principal_id,materiau_dependant_id,ratio_dependance,type_dependance,condition
+D001,M001,M002,1 sac de 35kg / 20 m²,obligatoire,
+D002,M003,M004,0.4 m³ / m³ de béton,obligatoire,
+D003,M003,M005,0.8 m³ / m³ de béton,obligatoire,
+D004,M003,M006,2.6 kg/m²,conditionnelle,si dalle porteuse
+D005,M003,M007,50 kg/m³,conditionnelle,si semelles ou longrines
+D006,M003,M008,120 kg/m³,conditionnelle,si poteaux béton armé
+D007,M011,M012,4 à 5 kg/m²,obligatoire,
+D008,M011,M013,25 unités/m²,obligatoire,
+D009,M011,M014,0.3 à 0.5 kg/m²,obligatoire,
+D010,M015,M016,2.5 m linéaire/m²,obligatoire,
+D011,M017,M018,1.1 m²/m²,conditionnelle,si isolation côté chaud d'une pièce chauffée
+D012,M020,M021,1 L / 10 m²,optionnelle,si changement de couleur ou support non peint
+D013,M022,M023,1.05 m²/m²,obligatoire,
+D014,M025,M026,1 m linéaire/m linéaire de câble,obligatoire,
+D015,M009,M010,correspondance directe,obligatoire,le hérisson supporte le film polyane

@@ -1,0 +1,10 @@
+id,type_piece,materiau_id,recommandation,note
+R001,piece_d_eau,M011,conseille,Carrelage recommandé en sol et mur pour l'étanchéité
+R002,piece_d_eau,M012,conseille,Colle carrelage adaptée aux zones humides à privilégier
+R003,piece_d_eau,M015,eviter,Préférer une plaque de plâtre hydrofuge (référence à ajouter au référentiel) plutôt que le BA13 standard
+R004,piece_a_vivre,M022,conseille,Parquet stratifié adapté aux pièces sèches à fort passage
+R005,piece_a_vivre,M020,conseille,Peinture de finition standard adaptée
+R006,chambre,M017,conseille,Isolation phonique/thermique standard adaptée
+R007,chambre,M022,conseille,Parquet ou stratifié adapté au confort de la pièce
+R008,piece_morte,M001,conseille,Cave, garage, combles non aménagés : maçonnerie brute souvent suffisante
+R009,piece_morte,M017,optionnel,Isolation minimale selon usage (stockage vs future pièce à vivre)

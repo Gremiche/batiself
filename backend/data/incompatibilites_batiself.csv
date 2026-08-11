@@ -1,0 +1,6 @@
+id_incompatibilite,materiau_a_id,materiau_b_id,raison,severite
+I001,M014,M011,Joint ciment classique risque de tacher un carrelage en pierre naturelle poreuse : préférer un joint epoxy,avertissement
+I002,M017,M018,Une laine de verre posée sans pare-vapeur côté chaud en pièce humide favorise la condensation dans l'isolant,bloquant
+I003,M015,M017,Une plaque de plâtre standard (non hydrofuge) posée directement contre une isolation en pièce d'eau expose au risque de moisissures,avertissement
+I004,M009,M003,Un film polyane percé ou mal recouvert sous une dalle béton supprime la protection contre les remontées d'humidité,avertissement
+I005,M020,M019,Appliquer une peinture de finition sur un enduit de lissage non sec ou non poncé provoque cloques et défauts d'adhérence,avertissement
