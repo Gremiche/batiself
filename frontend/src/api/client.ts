@@ -85,6 +85,19 @@ export const api = {
 
   // Synthèse chantier
   getSynthese: (chantierId: number) => req<Synthese>(`/chantiers/${chantierId}/synthese`),
+
+  // Corps de métier
+  getCorpsMetier: () => req<CorpsMetier[]>("/corps-metier/"),
+  createCorpsMetier: (data: CorpsMetierPayload) =>
+    req<CorpsMetier>("/corps-metier/", { method: "POST", body: JSON.stringify(data) }),
+  updateCorpsMetier: (id: number, data: CorpsMetierPayload) =>
+    req<CorpsMetier>(`/corps-metier/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  deleteCorpsMetier: (id: number) =>
+    req<void>(`/corps-metier/${id}`, { method: "DELETE" }),
+
+  // Dupliquer un matériau
+  duplicateMateriau: (id: number) =>
+    req<Materiau>(`/materiaux/${id}/duplicate`, { method: "POST" }),
 };
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -215,6 +228,16 @@ export interface Alerte {
   materiau_b: string;
   raison: string;
   severite: string;
+}
+
+export interface CorpsMetier {
+  id: number;
+  nom: string;
+  ordre: number;
+}
+export interface CorpsMetierPayload {
+  nom: string;
+  ordre: number;
 }
 
 export interface LigneSynthese {

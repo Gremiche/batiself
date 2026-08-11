@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import create_db_and_tables
-from routers import chantiers, pieces, materiaux, dependances, postes, import_export
+from routers import chantiers, pieces, materiaux, dependances, postes, import_export, corps_metier
 
 app = FastAPI(title="BatiSelf API", version="1.0.0")
 
@@ -18,6 +18,7 @@ app.include_router(materiaux.router)
 app.include_router(dependances.router)
 app.include_router(postes.router)
 app.include_router(import_export.router)
+app.include_router(corps_metier.router)
 
 
 @app.on_event("startup")

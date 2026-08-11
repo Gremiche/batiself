@@ -72,6 +72,25 @@ class PieceRead(PieceBase):
     volume: float
 
 
+# ─── CORPS DE MÉTIER ─────────────────────────────────────────────────────────
+
+class CorpsMetierBase(SQLModel):
+    nom: str = Field(unique=True)
+    ordre: int = 0
+
+
+class CorpsMetier(CorpsMetierBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+
+class CorpsMetierCreate(CorpsMetierBase):
+    pass
+
+
+class CorpsMetierRead(CorpsMetierBase):
+    id: int
+
+
 # ─── MATERIAU ────────────────────────────────────────────────────────────────
 
 class MateriauBase(SQLModel):

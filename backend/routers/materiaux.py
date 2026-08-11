@@ -48,3 +48,26 @@ def delete_materiau(materiau_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Matériau introuvable")
     session.delete(m)
     session.commit()
+
+
+@router.post("/{materiau_id}/duplicate", response_model=MateriauRead, status_code=201)
+def duplicate_materiau(materiau_id: int, session: Session = Depends(get_session)):
+    src = session.get(Materiau, materiau_id)
+    if not src:
+        raise HTTPException(status_code=404, detail="Matériau introuvable")
+    copy = Materiau(
+        nom=f"Copie de {src.nom}",
+        corps_metier=src.corps_metier,
+        unite=src.unite,
+        ratio_consommation=src.ratio_consommation,
+        prix_unitaire=src.prix_unitaire,
+        fournisseur=src.fournisseur,
+        notes=src.notes,
+        reference_obat=None,
+        conditionnement=src.conditionnement,
+        unite_achat=src.unite_achat,
+    )
+    session.add(copy)
+    session.commit()
+    session.refresh(copy)
+    return copy
