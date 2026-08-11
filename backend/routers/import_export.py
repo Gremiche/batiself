@@ -1,10 +1,12 @@
+import csv
+import io
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from fastapi.responses import StreamingResponse
-import io
-from sqlmodel import Session
+from sqlmodel import Session, select
 from database import get_session
 from services.import_obat import import_from_bytes
 from services.pdf_export import generate_pdf
+from models import Materiau
 
 router = APIRouter(tags=["import-export"])
 
@@ -25,6 +27,28 @@ async def import_obat(
         "message": f"{result['crees']} matériaux créés, {result['mis_a_jour']} mis à jour.",
         **result,
     }
+
+
+@router.get("/export/referentiel/csv")
+def export_referentiel_csv(session: Session = Depends(get_session)):
+    materiaux = session.exec(select(Materiau).order_by(Materiau.corps_metier, Materiau.nom)).all()
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Nom", "Corps de métier", "Unité", "Ratio consommation", "Prix HT", "Fournisseur", "Référence Obat", "Conditionnement", "Unité achat", "Notes"])
+    for m in materiaux:
+        writer.writerow([
+            m.nom, m.corps_metier, m.unite, m.ratio_consommation,
+            m.prix_unitaire if m.prix_unitaire is not None else "",
+            m.fournisseur or "", m.reference_obat or "",
+            m.conditionnement if m.conditionnement is not None else "",
+            m.unite_achat or "", m.notes or "",
+        ])
+    output.seek(0)
+    return StreamingResponse(
+        io.BytesIO(output.getvalue().encode("utf-8-sig")),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=referentiel.csv"},
+    )
 
 
 @router.get("/export/pdf/{chantier_id}")

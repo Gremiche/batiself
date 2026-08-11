@@ -49,11 +49,15 @@ export const api = {
   getDependances: () => req<Dependance[]>("/dependances"),
   createDependance: (data: DependancePayload) =>
     req<Dependance>("/dependances", { method: "POST", body: JSON.stringify(data) }),
+  updateDependance: (id: number, data: DependancePayload) =>
+    req<Dependance>(`/dependances/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteDependance: (id: number) =>
     req<void>(`/dependances/${id}`, { method: "DELETE" }),
   getIncompatibilites: () => req<Incompatibilite[]>("/incompatibilites"),
   createIncompatibilite: (data: IncompatibilitePayload) =>
     req<Incompatibilite>("/incompatibilites", { method: "POST", body: JSON.stringify(data) }),
+  updateIncompatibilite: (id: number, data: IncompatibilitePayload) =>
+    req<Incompatibilite>(`/incompatibilites/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteIncompatibilite: (id: number) =>
     req<void>(`/incompatibilites/${id}`, { method: "DELETE" }),
 
@@ -98,6 +102,19 @@ export const api = {
   // Dupliquer un matériau
   duplicateMateriau: (id: number) =>
     req<Materiau>(`/materiaux/${id}/duplicate`, { method: "POST" }),
+
+  // Stats matériau
+  getMateriauStats: (id: number) => req<MateriauStats>(`/materiaux/${id}/stats`),
+
+  // Export CSV référentiel
+  exportReferentielCsv: () => window.open(BASE + "/export/referentiel/csv", "_blank"),
+
+  // TypePieceMateriau
+  getTypePieceMateriau: () => req<TypePieceMateriauItem[]>("/type-piece-materiaux/"),
+  createTypePieceMateriau: (data: TypePieceMateriauPayload) =>
+    req<TypePieceMateriauItem>("/type-piece-materiaux/", { method: "POST", body: JSON.stringify(data) }),
+  deleteTypePieceMateriau: (id: number) =>
+    req<void>(`/type-piece-materiaux/${id}`, { method: "DELETE" }),
 };
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -107,8 +124,9 @@ export interface Chantier {
   nom: string;
   description: string;
   nb_pieces: number;
+  marge_securite: number;
 }
-export interface ChantierPayload { nom: string; description: string }
+export interface ChantierPayload { nom: string; description: string; marge_securite: number }
 
 export interface Piece {
   id: number;
@@ -166,6 +184,7 @@ export interface Dependance {
   ratio: number;
   type_dependance: string;
   condition: string | null;
+  usage: string | null;
 }
 export interface DependancePayload {
   materiau_principal_id: number;
@@ -173,6 +192,7 @@ export interface DependancePayload {
   ratio: number;
   type_dependance: string;
   condition: string | null;
+  usage: string | null;
 }
 
 export interface Incompatibilite {
@@ -196,6 +216,8 @@ export interface Poste {
   materiau_principal_id: number;
   quantite_reference: number;
   commentaire: string | null;
+  usage: string | null;
+  dependances_exclues: string | null;
 }
 export interface PostePayload {
   piece_id: number;
@@ -203,6 +225,8 @@ export interface PostePayload {
   materiau_principal_id: number;
   quantite_reference: number;
   commentaire: string | null;
+  usage: string | null;
+  dependances_exclues: string | null;
 }
 
 export interface LigneCalc {
@@ -213,6 +237,7 @@ export interface LigneCalc {
   prix_unitaire: number | null;
   total: number;
   est_dependant: boolean;
+  dependance_id: number | null;
   type_dependance?: string;
   nb_achat: number | null;
   unite_achat: string | null;
@@ -238,6 +263,22 @@ export interface CorpsMetier {
 export interface CorpsMetierPayload {
   nom: string;
   ordre: number;
+}
+
+export interface MateriauStats {
+  postes_count: number;
+  dependances: Dependance[];
+  incompatibilites: Incompatibilite[];
+}
+
+export interface TypePieceMateriauItem {
+  id: number;
+  type_piece: string;
+  materiau_id: number;
+}
+export interface TypePieceMateriauPayload {
+  type_piece: string;
+  materiau_id: number;
 }
 
 export interface LigneSynthese {

@@ -26,6 +26,7 @@ class TypeDependance(str, Enum):
 class ChantierBase(SQLModel):
     nom: str
     description: str = ""
+    marge_securite: float = 0.0  # pourcentage, ex: 10 = +10%
 
 
 class Chantier(ChantierBase, table=True):
@@ -126,6 +127,7 @@ class DependanceBase(SQLModel):
     ratio: float = 1.0
     type_dependance: TypeDependance = TypeDependance.obligatoire
     condition: Optional[str] = None
+    usage: Optional[str] = None  # "Mur", "Sol", "Plafond" — null = toutes surfaces
 
 
 class Dependance(DependanceBase, table=True):
@@ -169,6 +171,17 @@ class TypePieceMateriau(SQLModel, table=True):
     materiau_id: int = Field(foreign_key="materiau.id")
 
 
+class TypePieceMateriauCreate(SQLModel):
+    type_piece: TypePiece
+    materiau_id: int
+
+
+class TypePieceMateriauRead(SQLModel):
+    id: int
+    type_piece: TypePiece
+    materiau_id: int
+
+
 # ─── POSTE DE TRAVAUX ─────────────────────────────────────────────────────────
 
 class PosteTravauxBase(SQLModel):
@@ -177,6 +190,8 @@ class PosteTravauxBase(SQLModel):
     materiau_principal_id: int = Field(foreign_key="materiau.id")
     quantite_reference: float
     commentaire: Optional[str] = None
+    usage: Optional[str] = None               # "Mur", "Sol", "Plafond"
+    dependances_exclues: Optional[str] = None  # IDs Dependance exclus, séparés par ","
 
 
 class PosteTravaux(PosteTravauxBase, table=True):
