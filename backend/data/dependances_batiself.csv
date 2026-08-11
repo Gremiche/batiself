@@ -14,3 +14,8 @@ D012,M020,M021,1 L / 10 m²,optionnelle,si changement de couleur ou support non 
 D013,M022,M023,1.05 m²/m²,obligatoire,
 D014,M025,M026,1 m linéaire/m linéaire de câble,obligatoire,
 D015,M009,M010,correspondance directe,obligatoire,le hérisson supporte le film polyane
+D016,M003,M028,0.06 à 0.26 m³/m³ de béton,conditionnelle,si coffrage traditionnel bois (non banché)
+D017,M007,M029,2% du poids d'acier,obligatoire,
+D018,M008,M029,2% du poids d'acier,obligatoire,
+D019,M032,M033,2 à 3 m linéaire/m²,obligatoire,
+D020,M032,M034,1.1 m²/m²,conditionnelle,si combles aménagés ou climat pluvieux/venteux
