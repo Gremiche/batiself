@@ -34,3 +34,14 @@ M032,Tuiles mécaniques,Toiture,second_oeuvre,m²,10 à 12 unités/m²,palette d
 M033,Liteaux support de tuiles,Toiture,second_oeuvre,m²,2 à 3 m linéaire/m² (indicatif),barre de 4m,4 m linéaire,Calcul précis selon le pureau indiqué par le fabricant
 M034,Écran de sous-toiture,Toiture,second_oeuvre,m²,1.1 m²/m²,rouleau 1.5x50m,75 m²,Recouvrement des lés inclus
 M035,Peinture glycéro/vernis bois,Peinture,second_oeuvre,m²,0.3 kg/m²,pot de 2.5L,8 m² (indicatif),Alternative à la peinture acrylique pour boiseries et menuiseries
+M036,Prise de courant 16A,Electricité,second_oeuvre,unité,quantité fixe par pièce selon norme (voir EQUIPEMENTS_PAR_PIECE),boîte de 10,10 unités,NF C 15-100 : minimum variable selon type et surface de pièce
+M037,Point lumineux (DCL + interrupteur),Electricité,second_oeuvre,unité,1 par pièce principale ou de service (minimum),unité,1 unité,Obligatoire dans toute pièce principale ou de service selon NF C 15-100
+M038,Prise RJ45,Electricité,second_oeuvre,unité,1 par pièce principale (recommandé),boîte de 5,5 unités,Circuit de communication dédié recommandé par la norme
+M039,Disjoncteur modulaire,Electricité,second_oeuvre,unité,1 par circuit dédié,unité,1 unité,Le nombre de circuits dépend du nombre et du type de points installés
+M040,Cuvette WC,Plomberie,second_oeuvre,unité,1 par pièce d'eau avec toilettes,unité,1 unité,
+M041,Lavabo/vasque,Plomberie,second_oeuvre,unité,1 par salle de bain/salle d'eau,unité,1 unité,
+M042,Évier de cuisine,Plomberie,second_oeuvre,unité,1 par cuisine,unité,1 unité,
+M043,Receveur de douche,Plomberie,second_oeuvre,unité,1 si douche prévue,unité,1 unité,
+M044,Baignoire,Plomberie,second_oeuvre,unité,1 si baignoire prévue,unité,1 unité,
+M045,Siphon,Plomberie,second_oeuvre,unité,1 par appareil sanitaire avec évacuation,unité,1 unité,Lavabo évier douche et baignoire nécessitent chacun un siphon
+M046,Tuyau PVC évacuation 100mm,Plomberie,second_oeuvre,m linéaire,variable selon plan d'évacuation,barre de 4m,4 m linéaire,Diamètre selon DTU 60.11 pour un collecteur commun WC/douche
