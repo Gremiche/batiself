@@ -13,9 +13,9 @@ export default function Layout() {
       <aside className="w-56 bg-bleu flex flex-col flex-shrink-0">
         <div className="px-4 py-5 border-b border-white/10 flex items-center justify-center">
           <img
-            src="/logo-batiself.png"
+            src="/logo-batiself-white.svg"
             alt="BatiSelf"
-            className="w-40 object-contain"
+            className="w-44 object-contain"
           />
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
