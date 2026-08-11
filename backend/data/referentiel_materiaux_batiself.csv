@@ -1,28 +1,36 @@
-id,nom,corps_metier,phase,unite_reference,ratio_consommation,notes
-M001,Parpaing 20x20x50,Maçonnerie,premier_oeuvre,m²,10 unités/m²,Mur simple épaisseur 20cm hors joints
-M002,Mortier de pose parpaings,Maçonnerie,premier_oeuvre,m²,1 sac de 35kg / 20 m²,Dosage mortier maigre type M2.5
-M003,Béton dosé structure,Fondations/Dalle,premier_oeuvre,m³,350 kg ciment/m³,Fondations semelles dalle porteuse chaînages
-M004,Sable pour béton,Fondations/Dalle,premier_oeuvre,m³,0.4 m³/m³ de béton,A ajuster selon granulométrie
-M005,Gravier pour béton,Fondations/Dalle,premier_oeuvre,m³,0.8 m³/m³ de béton,A ajuster selon granulométrie
-M006,Treillis soudé ST25,Dalle,premier_oeuvre,m²,2.6 kg/m²,Ferraillage minimum dalle porteuse
-M007,Acier HA semelles/longrines,Fondations,premier_oeuvre,m³,50 kg/m³,Ferraillage béton armé fondations
-M008,Acier HA poteaux,Structure,premier_oeuvre,m³,120 kg/m³,Ferraillage béton armé poteaux
-M009,Film polyane sous dalle,Dalle,premier_oeuvre,m²,1.1 m²/m²,Recouvrement des lés inclus
-M010,Hérisson gravillons sous dalle,Dalle,premier_oeuvre,m²,0.15 à 0.20 m³/m²,Epaisseur 15 à 20 cm
-M011,Carreaux de carrelage,Carrelage,second_oeuvre,m²,1.05 m²/m² posé,Marge chutes 5%
-M012,Colle carrelage,Carrelage,second_oeuvre,m²,4 à 5 kg/m²,Simple encollage sol
-M013,Croisillons carrelage,Carrelage,second_oeuvre,m²,25 unités/m²,Espacement standard 2-3mm
-M014,Joint de carrelage,Carrelage,second_oeuvre,m²,0.3 à 0.5 kg/m²,Selon largeur de joint
-M015,Plaque de plâtre BA13,Plâtrerie,second_oeuvre,m²,1.1 m²/m²,Marge chutes 10%
-M016,Rail/montant ossature métallique,Plâtrerie,second_oeuvre,m²,2.5 m linéaire/m²,Cloison simple ossature
-M017,Laine de verre isolation,Isolation,second_oeuvre,m²,1.05 m²/m²,Combles ou murs, marge chutes
-M018,Pare-vapeur,Isolation,second_oeuvre,m²,1.1 m²/m²,Recouvrement des lés inclus
-M019,Enduit de lissage,Plâtrerie,second_oeuvre,m²,1 kg/m²/couche,Multiplier par nombre de couches
-M020,Peinture (couche de finition),Peinture,second_oeuvre,m²,1 L / 10-12 m²/couche,Rendement variable selon support et couleur
-M021,Sous-couche peinture,Peinture,second_oeuvre,m²,1 L / 10 m²,Impression avant peinture de finition
-M022,Parquet stratifié,Revêtement sol,second_oeuvre,m²,1.05 m²/m²,Marge chutes 5%
-M023,Sous-couche mousse parquet,Revêtement sol,second_oeuvre,m²,1.05 m²/m²,Marge chutes 5%
-M024,Plinthes,Revêtement sol,second_oeuvre,m linéaire,1 m linéaire/m périmètre pièce,Déduire les ouvertures de portes
-M025,Câble électrique 1.5mm²,Electricité,second_oeuvre,m²,3 m linéaire/m² (indicatif),Fortement variable selon plan électrique réel
-M026,Gaine ICTA,Electricité,second_oeuvre,m²,3 m linéaire/m² (indicatif),Proportionnel au câble tiré
-M027,Tube PER plomberie,Plomberie,second_oeuvre,m linéaire,Variable selon plan,A affiner poste par poste selon distribution
+id,nom,corps_metier,phase,unite_reference,ratio_consommation,conditionnement_vente,couverture_par_conditionnement,notes
+M001,Parpaing 20x20x50,Maçonnerie,premier_oeuvre,m²,10 unités/m²,palette de 60 unités,6 m²,Mur simple épaisseur 20cm hors joints
+M002,Mortier de pose parpaings,Maçonnerie,premier_oeuvre,m²,1 sac de 35kg / 20 m²,sac de 35kg,20 m²,Dosage mortier maigre type M2.5
+M003,Béton dosé structure,Fondations/Dalle,premier_oeuvre,m³,350 kg ciment/m³,toupie (livraison min. variable) ou sac prêt à l'emploi 25kg,0.012 m³ (sac) - toupie: voir fournisseur,Pour petits volumes privilégier le sac prêt à l'emploi
+M004,Sable pour béton,Fondations/Dalle,premier_oeuvre,m³,0.4 m³/m³ de béton,big bag,1 m³,Volume indicatif selon fournisseur
+M005,Gravier pour béton,Fondations/Dalle,premier_oeuvre,m³,0.8 m³/m³ de béton,big bag,1 m³,Volume indicatif selon fournisseur
+M006,Treillis soudé ST25,Dalle,premier_oeuvre,m²,2.6 kg/m²,panneau 2.4x1.2m,2.88 m²,Ferraillage minimum dalle porteuse
+M007,Acier HA semelles/longrines,Fondations,premier_oeuvre,m³,50 kg/m³,barre de 12m (diamètre variable),variable selon diamètre (ex: HA10 ≈ 7.4kg/barre),Poids par barre à vérifier selon le diamètre choisi
+M008,Acier HA poteaux,Structure,premier_oeuvre,m³,120 kg/m³,barre de 12m (diamètre variable),variable selon diamètre (ex: HA12 ≈ 10.7kg/barre),Poids par barre à vérifier selon le diamètre choisi
+M009,Film polyane sous dalle,Dalle,premier_oeuvre,m²,1.1 m²/m²,rouleau 4x25m,100 m²,Recouvrement des lés inclus
+M010,Hérisson gravillons sous dalle,Dalle,premier_oeuvre,m²,0.15 à 0.20 m³/m²,big bag,1 m³,Epaisseur 15 à 20 cm
+M011,Carreaux de carrelage,Carrelage,second_oeuvre,m²,1.05 m²/m² posé,boîte,1 m² (variable 0.8 à 1.44 m² selon référence),Vérifier la couverture exacte indiquée sur l'emballage du produit choisi
+M012,Colle carrelage,Carrelage,second_oeuvre,m²,4 à 5 kg/m²,sac de 25kg,5.5 m² (indicatif),Basé sur un ratio moyen de 4.5 kg/m²
+M013,Croisillons carrelage,Carrelage,second_oeuvre,m²,25 unités/m²,sachet de 100 unités,4 m²,Espacement standard 2-3mm
+M014,Joint de carrelage,Carrelage,second_oeuvre,m²,0.3 à 0.5 kg/m²,sac de 5kg,12.5 m² (indicatif),Basé sur un ratio moyen de 0.4 kg/m²
+M015,Plaque de plâtre BA13,Plâtrerie,second_oeuvre,m²,1.1 m²/m²,plaque 2.5x1.2m,3 m²,Marge chutes 10%
+M016,Rail/montant ossature métallique,Plâtrerie,second_oeuvre,m²,2.5 m linéaire/m²,barre de 3m,3 m linéaire,Cloison simple ossature
+M017,Laine de verre isolation,Isolation,second_oeuvre,m²,1.05 m²/m²,rouleau,10 m² (variable 8 à 13 m² selon épaisseur),Vérifier la couverture exacte selon l'épaisseur choisie
+M018,Pare-vapeur,Isolation,second_oeuvre,m²,1.1 m²/m²,rouleau 1.5x50m,75 m²,Recouvrement des lés inclus
+M019,Enduit de lissage,Plâtrerie,second_oeuvre,m²,1 kg/m²/couche,sac de 25kg,25 m² par couche,Multiplier la quantité totale par le nombre de couches
+M020,Peinture (couche de finition),Peinture,second_oeuvre,m²,1 L / 10-12 m²/couche,pot de 10L,100 m² par couche (indicatif),Rendement variable selon support et couleur
+M021,Sous-couche peinture,Peinture,second_oeuvre,m²,1 L / 10 m²,pot de 10L,100 m²,Impression avant peinture de finition
+M022,Parquet stratifié,Revêtement sol,second_oeuvre,m²,1.05 m²/m²,paquet,2.2 m² (variable 2 à 2.5 m² selon référence),Vérifier la couverture exacte indiquée sur l'emballage
+M023,Sous-couche mousse parquet,Revêtement sol,second_oeuvre,m²,1.05 m²/m²,rouleau,10 m²,
+M024,Plinthes,Revêtement sol,second_oeuvre,m linéaire,1 m linéaire/m périmètre pièce,barre de 2.4m,2.4 m linéaire,Déduire les ouvertures de portes
+M025,Câble électrique 1.5mm²,Electricité,second_oeuvre,m²,3 m linéaire/m² (indicatif),couronne de 50m,50 m linéaire,Fortement variable selon plan électrique réel
+M026,Gaine ICTA,Electricité,second_oeuvre,m²,3 m linéaire/m² (indicatif),couronne de 25m,25 m linéaire,Proportionnel au câble tiré
+M027,Tube PER plomberie,Plomberie,second_oeuvre,m linéaire,Variable selon plan,couronne de 50m,50 m linéaire,A affiner poste par poste selon distribution
+M028,Bois de coffrage,Coffrage,premier_oeuvre,m³,0.06 à 0.26 m³/m³ de béton,panneau contreplaqué coffrage 2.5x1.22m,3 m² (à convertir selon épaisseur utile),Vendu au m² de panneau ; conversion en m³ à affiner selon usage
+M029,Fil d'attache ferraillage,Ferraillage,premier_oeuvre,kg,2% du poids d'acier,bobine de 25kg,25 kg,Sert à ligaturer les cages d'armature
+M030,Enduit de façade,Maçonnerie,premier_oeuvre,m²,7 kg ciment + 0.015 m³ sable par m² (épaisseur 1.5cm),sac de 25kg (enduit prêt à l'emploi),3.5 m² par couche (indicatif),Ratio différent si enduit traditionnel réalisé à partir de ciment et sable en vrac
+M031,Chape de ragréage,Sols,premier_oeuvre,m²,20 kg ciment/m² (épaisseur 3cm),sac de 25kg,1.25 m² (chape traditionnelle 3cm),Un ragréage autolissant fin a un rendement très différent, à vérifier sur l'emballage
+M032,Tuiles mécaniques,Toiture,second_oeuvre,m²,10 à 12 unités/m²,palette de 180 unités (indicatif),16 m² (indicatif),Fortement variable selon pente et modèle : se référer à la fiche fabricant
+M033,Liteaux support de tuiles,Toiture,second_oeuvre,m²,2 à 3 m linéaire/m² (indicatif),barre de 4m,4 m linéaire,Calcul précis selon le pureau indiqué par le fabricant
+M034,Écran de sous-toiture,Toiture,second_oeuvre,m²,1.1 m²/m²,rouleau 1.5x50m,75 m²,Recouvrement des lés inclus
+M035,Peinture glycéro/vernis bois,Peinture,second_oeuvre,m²,0.3 kg/m²,pot de 2.5L,8 m² (indicatif),Alternative à la peinture acrylique pour boiseries et menuiseries
