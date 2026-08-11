@@ -2,8 +2,36 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   api, Piece, Poste, PostePayload, Materiau,
-  CalcResult, LigneCalc, Alerte,
+  CalcResult, Alerte,
 } from "../api/client";
+
+type BaseRef = "sol" | "murs" | "volume" | "perimetre" | "manuel";
+
+function getBaseRef(unite: string): BaseRef {
+  const u = unite.toLowerCase();
+  if (u === "m³") return "volume";
+  if (u === "m") return "perimetre";
+  if (u === "m²") return "sol";
+  return "manuel";
+}
+
+function computeQuantite(base: BaseRef, piece: Piece): number {
+  switch (base) {
+    case "sol":       return piece.surface_sol;
+    case "murs":      return piece.surface_murs;
+    case "volume":    return piece.volume;
+    case "perimetre": return parseFloat((2 * (piece.longueur + piece.largeur)).toFixed(2));
+    default:          return 0;
+  }
+}
+
+const BASE_LABELS: Record<BaseRef, string> = {
+  sol:       "Surface sol",
+  murs:      "Surface murs",
+  volume:    "Volume",
+  perimetre: "Périmètre",
+  manuel:    "Manuel",
+};
 
 export default function PieceDetail() {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +51,8 @@ export default function PieceDetail() {
     materiau_principal_id: 0,
     quantite_reference: 0,
   });
+  const [baseRef, setBaseRef] = useState<BaseRef>("manuel");
+  const [selectedMat, setSelectedMat] = useState<Materiau | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
 
@@ -51,7 +81,37 @@ export default function PieceDetail() {
 
   useEffect(() => { load(); }, [pieceId]);
 
-  const close = () => { setShowForm(false); setError(""); };
+  const close = () => {
+    setShowForm(false);
+    setError("");
+    setSelectedMat(null);
+    setBaseRef("manuel");
+  };
+
+  const openForm = () => {
+    setForm({ piece_id: pieceId, corps_metier: "", materiau_principal_id: 0, quantite_reference: 0 });
+    setSelectedMat(null);
+    setBaseRef("manuel");
+    setShowForm(true);
+  };
+
+  const handleSelectMateriau = (matId: number) => {
+    if (!piece) return;
+    const m = materiaux.find((m) => m.id === matId);
+    if (!m) return;
+    setSelectedMat(m);
+    const base = getBaseRef(m.unite);
+    setBaseRef(base);
+    const qte = base !== "manuel" ? computeQuantite(base, piece) : 0;
+    setForm({ ...form, materiau_principal_id: matId, corps_metier: m.corps_metier, quantite_reference: qte });
+  };
+
+  const handleChangeBase = (newBase: BaseRef) => {
+    if (!piece) return;
+    setBaseRef(newBase);
+    const qte = newBase !== "manuel" ? computeQuantite(newBase, piece) : form.quantite_reference;
+    setForm((f) => ({ ...f, quantite_reference: qte }));
+  };
 
   const save = async () => {
     if (!form.materiau_principal_id) { setError("Sélectionnez un matériau."); return; }
@@ -68,16 +128,9 @@ export default function PieceDetail() {
     load();
   };
 
-  const selectMateriau = (id: number) => {
-    const m = materiaux.find((m) => m.id === id);
-    setForm({ ...form, materiau_principal_id: id, corps_metier: m?.corps_metier ?? "" });
-  };
-
-  const totalChantier = () => {
+  const totalPiece = () => {
     let t = 0;
-    Object.values(calculs).forEach((c) => {
-      c.lignes.forEach((l) => { t += l.total; });
-    });
+    Object.values(calculs).forEach((c) => c.lignes.forEach((l) => { t += l.total; }));
     return t;
   };
 
@@ -99,15 +152,16 @@ export default function PieceDetail() {
                 {piece.type_piece}
               </span>
             </div>
-            <button onClick={() => setShowForm(true)} className="btn-primary">+ Ajouter un poste</button>
+            <button onClick={openForm} className="btn-primary">+ Ajouter un poste</button>
           </div>
 
           {/* Dimensions */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-4 gap-4 mb-6">
             {[
-              { label: "Surface sol", val: `${piece.surface_sol.toFixed(2)} m²` },
+              { label: "Surface sol",  val: `${piece.surface_sol.toFixed(2)} m²` },
               { label: "Surface murs", val: `${piece.surface_murs.toFixed(2)} m²` },
-              { label: "Volume", val: `${piece.volume.toFixed(2)} m³` },
+              { label: "Volume",       val: `${piece.volume.toFixed(2)} m³` },
+              { label: "Périmètre",    val: `${(2*(piece.longueur+piece.largeur)).toFixed(2)} m` },
             ].map(({ label, val }) => (
               <div key={label} className="card text-center">
                 <p className="text-xs text-gray-500">{label}</p>
@@ -176,7 +230,9 @@ export default function PieceDetail() {
                         <p className="font-bold text-bleu">
                           {materiaux.find((m) => m.id === poste.materiau_principal_id)?.nom ?? "—"}
                         </p>
-                        <p className="text-sm text-gray-500">{poste.corps_metier} • ref: {poste.quantite_reference}</p>
+                        <p className="text-sm text-gray-500">
+                          {poste.corps_metier} · réf. {poste.quantite_reference}
+                        </p>
                       </div>
                       <button onClick={() => remove(poste.id)} className="btn-danger text-xs py-1 px-2">Supprimer</button>
                     </div>
@@ -213,11 +269,11 @@ export default function PieceDetail() {
                 );
               })}
 
-              {totalChantier() > 0 && (
+              {totalPiece() > 0 && (
                 <div className="flex justify-end">
                   <div className="card inline-flex items-center gap-3 py-3 px-5">
                     <span className="text-sm text-gray-500">Total estimé pièce :</span>
-                    <span className="text-xl font-bold text-orange">{totalChantier().toFixed(2)} €</span>
+                    <span className="text-xl font-bold text-orange">{totalPiece().toFixed(2)} €</span>
                   </div>
                 </div>
               )}
@@ -227,16 +283,17 @@ export default function PieceDetail() {
       )}
 
       {/* Modal nouveau poste */}
-      {showForm && (
+      {showForm && piece && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="card w-full max-w-md shadow-xl">
             <h2 className="text-xl font-bold text-bleu mb-5">Nouveau poste de travaux</h2>
 
+            {/* Sélection matériau */}
             <label className="label">Matériau principal *</label>
             <select
-              className="input mb-3"
+              className="input mb-4"
               value={form.materiau_principal_id || ""}
-              onChange={(e) => selectMateriau(Number(e.target.value))}
+              onChange={(e) => handleSelectMateriau(Number(e.target.value))}
             >
               <option value="">-- Sélectionner --</option>
               {materiaux.map((m) => (
@@ -246,14 +303,93 @@ export default function PieceDetail() {
               ))}
             </select>
 
-            <label className="label">Quantité de référence *</label>
-            <input
-              className="input mb-4"
-              type="number" step="0.01" min="0"
-              value={form.quantite_reference || ""}
-              onChange={(e) => setForm({ ...form, quantite_reference: parseFloat(e.target.value) || 0 })}
-              placeholder="Ex: surface sol, surface murs..."
-            />
+            {/* Bloc quantité — affiché seulement si matériau sélectionné */}
+            {selectedMat && (
+              <div className="bg-bleu/5 border border-bleu/15 rounded-xl p-4 mb-4">
+                <p className="text-xs font-semibold text-bleu uppercase tracking-wide mb-3">
+                  Quantité de référence
+                </p>
+
+                {/* Choix de la base de calcul */}
+                {selectedMat.unite === "m²" ? (
+                  <>
+                    <p className="text-xs text-gray-500 mb-2">Surface à utiliser :</p>
+                    <div className="flex gap-2 mb-3 flex-wrap">
+                      {(["sol", "murs", "manuel"] as BaseRef[]).map((b) => (
+                        <button
+                          key={b}
+                          onClick={() => handleChangeBase(b)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                            baseRef === b
+                              ? "bg-orange text-white"
+                              : "bg-white border border-gray-300 text-gray-600 hover:border-orange"
+                          }`}
+                        >
+                          {BASE_LABELS[b]}
+                          {b !== "manuel" && (
+                            <span className="ml-1 opacity-70">
+                              ({computeQuantite(b, piece).toFixed(2)} m²)
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                ) : baseRef !== "manuel" ? (
+                  <p className="text-xs text-gray-500 mb-2">
+                    Calculé automatiquement depuis le{" "}
+                    <span className="font-semibold text-bleu">{BASE_LABELS[baseRef].toLowerCase()}</span>{" "}
+                    de la pièce.
+                  </p>
+                ) : null}
+
+                {/* Champ quantité */}
+                <div className="flex items-center gap-3">
+                  <input
+                    className={`input flex-1 ${baseRef !== "manuel" ? "bg-gray-50 text-bleu font-semibold" : ""}`}
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={form.quantite_reference || ""}
+                    readOnly={baseRef !== "manuel"}
+                    onChange={(e) =>
+                      baseRef === "manuel" &&
+                      setForm({ ...form, quantite_reference: parseFloat(e.target.value) || 0 })
+                    }
+                  />
+                  <span className="text-sm text-gray-500 w-8 shrink-0">{selectedMat.unite}</span>
+                </div>
+
+                {baseRef !== "manuel" && (
+                  <p className="text-xs text-gray-400 mt-2">
+                    Valeur verrouillée sur la dimension de la pièce.{" "}
+                    {selectedMat.unite === "m²" && (
+                      <button
+                        className="text-orange underline"
+                        onClick={() => handleChangeBase("manuel")}
+                      >
+                        Saisir manuellement
+                      </button>
+                    )}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Champ quantité fallback si aucun matériau sélectionné */}
+            {!selectedMat && (
+              <>
+                <label className="label">Quantité de référence *</label>
+                <input
+                  className="input mb-4"
+                  type="number" step="0.01" min="0"
+                  value={form.quantite_reference || ""}
+                  onChange={(e) => setForm({ ...form, quantite_reference: parseFloat(e.target.value) || 0 })}
+                  placeholder="Sélectionnez d'abord un matériau"
+                  disabled
+                />
+              </>
+            )}
 
             {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
             <div className="flex gap-3 justify-end">
