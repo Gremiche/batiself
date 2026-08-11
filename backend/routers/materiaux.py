@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select
-from models import Materiau, MateriauCreate, MateriauRead
+from sqlmodel import Session, select, or_
+from models import Materiau, MateriauCreate, MateriauRead, Dependance, DependanceRead, Incompatibilite, IncompatibiliteRead, PosteTravaux
 from database import get_session
 
 router = APIRouter(prefix="/materiaux", tags=["materiaux"])
@@ -50,6 +50,29 @@ def delete_materiau(materiau_id: int, session: Session = Depends(get_session)):
     session.commit()
 
 
+@router.get("/{materiau_id}/stats")
+def get_materiau_stats(materiau_id: int, session: Session = Depends(get_session)):
+    m = session.get(Materiau, materiau_id)
+    if not m:
+        raise HTTPException(status_code=404, detail="Matériau introuvable")
+    postes_count = len(session.exec(
+        select(PosteTravaux).where(PosteTravaux.materiau_principal_id == materiau_id)
+    ).all())
+    dependances = session.exec(
+        select(Dependance).where(Dependance.materiau_principal_id == materiau_id)
+    ).all()
+    incompatibilites = session.exec(
+        select(Incompatibilite).where(
+            or_(Incompatibilite.materiau_a_id == materiau_id, Incompatibilite.materiau_b_id == materiau_id)
+        )
+    ).all()
+    return {
+        "postes_count": postes_count,
+        "dependances": [DependanceRead.model_validate(d) for d in dependances],
+        "incompatibilites": [IncompatibiliteRead.model_validate(i) for i in incompatibilites],
+    }
+
+
 @router.post("/{materiau_id}/duplicate", response_model=MateriauRead, status_code=201)
 def duplicate_materiau(materiau_id: int, session: Session = Depends(get_session)):
     src = session.get(Materiau, materiau_id)
@@ -68,6 +91,20 @@ def duplicate_materiau(materiau_id: int, session: Session = Depends(get_session)
         unite_achat=src.unite_achat,
     )
     session.add(copy)
+    session.flush()
+
+    # Copier également les dépendances du matériau source
+    deps = session.exec(select(Dependance).where(Dependance.materiau_principal_id == materiau_id)).all()
+    for dep in deps:
+        session.add(Dependance(
+            materiau_principal_id=copy.id,
+            materiau_dependant_id=dep.materiau_dependant_id,
+            ratio=dep.ratio,
+            type_dependance=dep.type_dependance,
+            condition=dep.condition,
+            usage=dep.usage,
+        ))
+
     session.commit()
     session.refresh(copy)
     return copy

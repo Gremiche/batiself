@@ -3,11 +3,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from models import (
     PosteTravaux, PosteTravauxCreate, PosteTravauxRead,
-    Materiau, Dependance, Incompatibilite, Piece
+    Materiau, Dependance, Incompatibilite, Piece, Chantier
 )
 from database import get_session
 
 router = APIRouter(prefix="/postes", tags=["postes"])
+
+USAGES = ["Mur", "Sol", "Plafond"]
 
 
 @router.get("/piece/{piece_id}", response_model=list[PosteTravauxRead])
@@ -35,7 +37,6 @@ def delete_poste(poste_id: int, session: Session = Depends(get_session)):
 
 @router.get("/calcul/{poste_id}")
 def calcul_poste(poste_id: int, session: Session = Depends(get_session)):
-    """Retourne le matériau principal + dépendants avec quantités calculées."""
     poste = session.get(PosteTravaux, poste_id)
     if not poste:
         raise HTTPException(status_code=404, detail="Poste introuvable")
@@ -44,11 +45,27 @@ def calcul_poste(poste_id: int, session: Session = Depends(get_session)):
     if not mat_principal:
         raise HTTPException(status_code=404, detail="Matériau introuvable")
 
-    qte_principale = poste.quantite_reference * mat_principal.ratio_consommation
+    # Marge de sécurité du chantier
+    piece = session.get(Piece, poste.piece_id)
+    chantier = session.get(Chantier, piece.chantier_id) if piece else None
+    marge = 1 + (chantier.marge_securite or 0) / 100 if chantier else 1.0
 
-    dependances = session.exec(
+    qte_principale = poste.quantite_reference * mat_principal.ratio_consommation * marge
+
+    # Dépendances filtrées par usage et exclues
+    all_deps = session.exec(
         select(Dependance).where(Dependance.materiau_principal_id == poste.materiau_principal_id)
     ).all()
+
+    excluded_ids: set[int] = set()
+    if poste.dependances_exclues:
+        excluded_ids = {int(x) for x in poste.dependances_exclues.split(",") if x.strip()}
+
+    dependances = [
+        d for d in all_deps
+        if d.id not in excluded_ids
+        and (not poste.usage or not d.usage or d.usage == poste.usage)
+    ]
 
     def _nb_achat(qte: float, mat: Materiau) -> int | None:
         if mat.conditionnement and mat.conditionnement > 0:
@@ -63,6 +80,7 @@ def calcul_poste(poste_id: int, session: Session = Depends(get_session)):
         "prix_unitaire": mat_principal.prix_unitaire,
         "total": round(qte_principale * (mat_principal.prix_unitaire or 0), 2),
         "est_dependant": False,
+        "dependance_id": None,
         "nb_achat": _nb_achat(qte_principale, mat_principal),
         "unite_achat": mat_principal.unite_achat,
         "conditionnement": mat_principal.conditionnement,
@@ -72,7 +90,7 @@ def calcul_poste(poste_id: int, session: Session = Depends(get_session)):
         mat_dep = session.get(Materiau, dep.materiau_dependant_id)
         if not mat_dep:
             continue
-        qte_dep = poste.quantite_reference * dep.ratio
+        qte_dep = poste.quantite_reference * dep.ratio * marge
         lignes.append({
             "materiau_id": mat_dep.id,
             "nom": mat_dep.nom,
@@ -81,27 +99,29 @@ def calcul_poste(poste_id: int, session: Session = Depends(get_session)):
             "prix_unitaire": mat_dep.prix_unitaire,
             "total": round(qte_dep * (mat_dep.prix_unitaire or 0), 2),
             "est_dependant": True,
+            "dependance_id": dep.id,
             "type_dependance": dep.type_dependance,
             "nb_achat": _nb_achat(qte_dep, mat_dep),
             "unite_achat": mat_dep.unite_achat,
             "conditionnement": mat_dep.conditionnement,
         })
 
-    return {"poste_id": poste_id, "lignes": lignes, "commentaire": poste.commentaire}
+    return {
+        "poste_id": poste_id,
+        "lignes": lignes,
+        "commentaire": poste.commentaire,
+        "usage": poste.usage,
+        "marge_securite": chantier.marge_securite if chantier else 0,
+    }
 
 
 @router.get("/incompatibilites/piece/{piece_id}")
 def check_incompatibilites(piece_id: int, session: Session = Depends(get_session)):
-    """Détecte les incompatibilités entre postes d'une même pièce."""
     postes = session.exec(select(PosteTravaux).where(PosteTravaux.piece_id == piece_id)).all()
     mat_ids = [p.materiau_principal_id for p in postes]
-
     alertes = []
-    incompats = session.exec(select(Incompatibilite)).all()
-    for inc in incompats:
-        a_present = inc.materiau_a_id in mat_ids
-        b_present = inc.materiau_b_id in mat_ids
-        if a_present and b_present:
+    for inc in session.exec(select(Incompatibilite)).all():
+        if inc.materiau_a_id in mat_ids and inc.materiau_b_id in mat_ids:
             mat_a = session.get(Materiau, inc.materiau_a_id)
             mat_b = session.get(Materiau, inc.materiau_b_id)
             alertes.append({
@@ -110,5 +130,4 @@ def check_incompatibilites(piece_id: int, session: Session = Depends(get_session
                 "raison": inc.raison,
                 "severite": inc.severite,
             })
-
     return {"piece_id": piece_id, "alertes": alertes}
